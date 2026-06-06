@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     database_url: str = ""
 
     jwt_secret: str = ""
+    jwt_algorithm: str = ""
+    access_token_expire_minutes: int = 30
 
     qdrant_url: str = ""
     qdrant_api_key: str = ""

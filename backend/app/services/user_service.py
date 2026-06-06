@@ -6,7 +6,11 @@ from app.models import User
 
 from fastapi import HTTPException, status
 
-from app.core.security import get_password_hash
+from app.core.security import (
+    get_password_hash,
+    verify_password,
+    create_access_token
+)
 
 class UserService:
 
@@ -38,3 +42,29 @@ class UserService:
         db.refresh(new_user)
 
         return new_user
+    
+    @staticmethod
+    def authenticate_user(
+        db: Session,
+        email: str,
+        password: str
+    ):
+        user = db.query(User).filter(
+            User.email == email
+        ).first()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid email or password"
+            )
+        if not verify_password(password,user.hashed_password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid email or password"
+            )        
+        access_token = create_access_token(subject=str(user.id))
+
+        return {
+            "access_token": access_token,
+            "token_type": "bearer"
+        }

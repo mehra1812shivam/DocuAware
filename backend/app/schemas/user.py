@@ -27,3 +27,11 @@ class UserResponse(BaseModel):
     email: EmailStr
     department: Department
     role: UserRole
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
