@@ -4,7 +4,9 @@ from sqlalchemy.orm import Session
 
 from fastapi import Depends
 
-from app.api.dependencies import get_db
+from app.models import User
+
+from app.api.dependencies import get_db,get_current_user,get_current_admin_user
 from app.schemas.user import (
     UserRegister,
     UserResponse,
@@ -32,3 +34,17 @@ def login(user_data: UserLogin,db: Session = Depends(get_db)):
         email=user_data.email,
         password=user_data.password
     )
+
+@router.get("/me", response_model=UserResponse)
+def get_me(current_user: User = Depends(get_current_user)):
+    return current_user
+
+
+@router.get("/admin-test")
+def admin_test(
+    user = Depends(get_current_admin_user)
+):
+    return {
+        "message": "You are admin",
+        "user": user.email
+    }

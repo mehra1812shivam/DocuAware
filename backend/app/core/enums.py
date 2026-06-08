@@ -12,3 +12,13 @@ class Department(str, Enum):
     FINANCE = "FINANCE"
     LEGAL = "LEGAL"
     OPERATIONS = "OPERATIONS"
+
+class DocumentStatus(str, Enum):
+    PROCESSING = "PROCESSING"
+    READY = "READY"
+    FAILED = "FAILED"
+
+class FileType(str, Enum):
+    PDF = "PDF"
+    DOCX = "DOCX"
+    TXT = "TXT"
