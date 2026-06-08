@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 from sqlalchemy import DateTime, ForeignKey, String, UUID, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app.core.enums import DocumentStatus
+from app.core.enums import DocumentStatus,FileType
 from app.db.base import Base
 
 
@@ -19,6 +19,11 @@ class Document(Base):
     filename: Mapped[str] = mapped_column(
         String(255),
         nullable=False
+    )
+
+    file_type: Mapped[FileType] = mapped_column(
+    Enum(FileType),
+    nullable=False
     )
 
     owner_id: Mapped[uuid.UUID] = mapped_column(
