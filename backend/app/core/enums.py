@@ -12,6 +12,7 @@ class Department(str, Enum):
     FINANCE = "FINANCE"
     LEGAL = "LEGAL"
     OPERATIONS = "OPERATIONS"
+    OTHER = "OTHER"
 
 class DocumentStatus(str, Enum):
     PROCESSING = "PROCESSING"
@@ -22,3 +23,8 @@ class FileType(str, Enum):
     PDF = "PDF"
     DOCX = "DOCX"
     TXT = "TXT"
+
+class ConfidentialityLevel(str, Enum):
+    PUBLIC = "PUBLIC"
+    INTERNAL = "INTERNAL"
+    CONFIDENTIAL = "CONFIDENTIAL"
