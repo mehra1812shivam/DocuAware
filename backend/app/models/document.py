@@ -1,9 +1,13 @@
 import uuid
 from datetime import datetime, timezone
-
+from app.core.enums import (
+    FileType,
+    DocumentStatus,
+    Department,
+    ConfidentialityLevel
+)
 from sqlalchemy import DateTime, ForeignKey, String, UUID, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app.core.enums import DocumentStatus,FileType
 from app.db.base import Base
 
 
@@ -36,6 +40,16 @@ class Document(Base):
     Enum(DocumentStatus),
     nullable=False,
     default=DocumentStatus.PROCESSING
+    )
+
+    department: Mapped[Department] = mapped_column(
+    Enum(Department),
+    nullable=False
+    )
+
+    confidentiality: Mapped[ConfidentialityLevel] = mapped_column(
+        Enum(ConfidentialityLevel),
+        nullable=False
     )
 
     created_at: Mapped[datetime] = mapped_column(
