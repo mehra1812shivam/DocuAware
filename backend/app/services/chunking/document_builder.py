@@ -13,7 +13,7 @@ class DocumentBuilder:
 
         documents = []
 
-        for chunk in chunks:
+        for index, chunk in enumerate(chunks):
 
             documents.append(
                 Document(
@@ -23,7 +23,8 @@ class DocumentBuilder:
                         "owner_id": str(document.owner_id),
                         "department": document.department.value,
                         "confidentiality": document.confidentiality.value,
-                        "filename": document.filename
+                        "filename": document.filename,
+                        "chunk_index": index
                     }
                 )
             )
