@@ -13,6 +13,7 @@ class Settings(BaseSettings):
 
     qdrant_url: str = ""
     qdrant_api_key: str = ""
+    qdrant_collection: str = ""
 
     grok_api_key: str = ""
 
