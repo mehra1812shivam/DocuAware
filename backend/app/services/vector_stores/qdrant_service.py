@@ -71,3 +71,10 @@ class QdrantService:
             collection_name=settings.qdrant_collection,
             points=points
         )
+    def search(self,query_embedding: list[float],limit: int = 5):
+
+        return self.client.query_points(
+            collection_name=settings.qdrant_collection,
+            query=query_embedding,
+            limit=limit
+        ).points
