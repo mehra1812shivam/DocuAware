@@ -10,6 +10,9 @@ from sqlalchemy.orm import Session
 from app.core.enums import (ConfidentialityLevel,DocumentStatus)
 from app.services.document_service import DocumentService
 from app.schemas.document import DocumentResponse
+from app.services.ingestion.document_ingestion_service import (
+    DocumentIngestionService
+)
 
 router = APIRouter(
     prefix="/documents",
@@ -44,18 +47,27 @@ def upload_document(
             file_type=file_type,
             file_path=str(file_path)
         )
+        ingestion_service = DocumentIngestionService()
 
-        document_service.update_status(document.id,DocumentStatus.READY)
+        ingestion_service.ingest(
+            text=text,
+            document=document
+        )
+
+        document_service.update_status(
+            document.id,
+            DocumentStatus.READY
+        )        
 
         return {
             "message": "File uploaded successfully",
             "document_id": str(document.id),
             "filename": file.filename,
-            "status": DocumentStatus.READY,
+            "status": DocumentStatus.READY.value,
             "text_preview": text[:500]
         }
 
-    except ValueError as e:
+    except Exception as e:
 
         if 'document' in locals():
             document_service.update_status(
