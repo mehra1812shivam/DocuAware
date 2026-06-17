@@ -12,6 +12,7 @@ class RetrievalService:
     def retrieve(
         self,
         query: str,
+        owner_id:str,
         limit: int = 5
     ):
 
@@ -21,6 +22,7 @@ class RetrievalService:
 
         results = self.qdrant_service.search(
             query_embedding=query_embedding,
+            owner_id=owner_id,
             limit=limit
         )
 
