@@ -14,6 +14,12 @@ from uuid import uuid4
 
 from langchain_core.documents import Document
 
+from qdrant_client.models import (
+    Filter,
+    FieldCondition,
+    MatchValue
+)
+
 
 class QdrantService:
 
@@ -43,6 +49,14 @@ class QdrantService:
                 distance=Distance.COSINE
             )
         )
+    
+    def create_payload_indexes(self):
+        self.client.create_payload_index(
+            collection_name=settings.qdrant_collection,
+            field_name="owner_id",
+            field_schema="keyword"
+        )
+
     def upsert_documents(
             self,
             documents: list[Document],
@@ -71,3 +85,19 @@ class QdrantService:
             collection_name=settings.qdrant_collection,
             points=points
         )
+    def search(self,query_embedding: list[float],owner_id: str,limit: int = 5):
+        return self.client.query_points(
+            collection_name=settings.qdrant_collection,
+            query=query_embedding,
+            query_filter=Filter(
+                must=[
+                    FieldCondition(
+                        key="owner_id",
+                        match=MatchValue(
+                            value=owner_id
+                        )
+                    )
+                ]
+            ),
+            limit=limit
+        ).points
