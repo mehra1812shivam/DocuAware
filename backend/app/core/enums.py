@@ -28,3 +28,7 @@ class ConfidentialityLevel(str, Enum):
     PUBLIC = "PUBLIC"
     INTERNAL = "INTERNAL"
     CONFIDENTIAL = "CONFIDENTIAL"
+
+class SearchScope(str, Enum):
+    MY_DOCUMENTS = "MY_DOCUMENTS"
+    ALL_ACCESSIBLE = "ALL_ACCESSIBLE"

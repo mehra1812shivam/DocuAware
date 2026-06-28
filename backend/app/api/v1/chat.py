@@ -19,9 +19,11 @@ def chat(
     current_user: User = Depends(get_current_user)
 ):
     chat_service = ChatService()
+
     response = chat_service.chat(
-    question=request.question,
-    owner_id=str(current_user.id)
+        question=request.question,
+        owner_id=str(current_user.id),
+        scope=request.scope
     )
 
     return ChatResponse(

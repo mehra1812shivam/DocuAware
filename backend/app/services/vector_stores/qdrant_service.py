@@ -4,6 +4,8 @@ from qdrant_client import QdrantClient
 
 from app.core.config import settings
 
+from app.core.enums import SearchScope
+
 from qdrant_client.models import (
     Distance,
     VectorParams,
@@ -85,11 +87,9 @@ class QdrantService:
             collection_name=settings.qdrant_collection,
             points=points
         )
-    def search(self,query_embedding: list[float],owner_id: str,limit: int = 5):
-        return self.client.query_points(
-            collection_name=settings.qdrant_collection,
-            query=query_embedding,
-            query_filter=Filter(
+    def search(self,query_embedding: list[float],owner_id: str,scope: SearchScope,limit: int = 5):
+        if scope == SearchScope.MY_DOCUMENTS:
+            query_filter = Filter(
                 must=[
                     FieldCondition(
                         key="owner_id",
@@ -98,6 +98,27 @@ class QdrantService:
                         )
                     )
                 ]
-            ),
+            )
+
+        else:
+
+            # TODO:
+            # Implement ALL_ACCESSIBLE filter
+            query_filter = Filter(
+                must=[
+                    FieldCondition(
+                        key="owner_id",
+                        match=MatchValue(
+                            value=owner_id
+                        )
+                    )
+                ]
+            )
+
+
+        return self.client.query_points(
+            collection_name=settings.qdrant_collection,
+            query=query_embedding,
+            query_filter=query_filter,
             limit=limit
         ).points
