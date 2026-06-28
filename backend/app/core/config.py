@@ -15,7 +15,8 @@ class Settings(BaseSettings):
     qdrant_api_key: str = ""
     qdrant_collection: str = ""
 
-    grok_api_key: str = ""
+    gemini_api_key: str = ""
+    gemini_model: str = ""
 
     model_config = SettingsConfigDict(
         env_file=".env",
