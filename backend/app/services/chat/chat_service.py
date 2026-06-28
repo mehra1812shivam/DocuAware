@@ -2,6 +2,7 @@ from app.services.retrieval.retrieval_service import RetrievalService
 from app.services.reranking.reranker_service import RerankerService
 from app.services.prompting.prompt_builder import PromptBuilder
 from app.services.llm.gemini_service import GeminiService
+from app.core.enums import SearchScope
 import time 
 
 class ChatService:
@@ -16,12 +17,16 @@ class ChatService:
     def chat(
         self,
         question: str,
-        owner_id: str
+        owner_id: str,
+        department: str,
+        scope: SearchScope
     ) -> str:
         start = time.perf_counter()
         chunks = self.retrieval_service.retrieve(
             query=question,
             owner_id=owner_id,
+            department=department,
+            scope=scope,
             limit=10
         )
         print(f"Retrieve: {time.perf_counter()-start:.2f}s")

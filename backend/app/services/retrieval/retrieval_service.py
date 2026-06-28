@@ -1,5 +1,6 @@
 from app.services.embeddings.embedding_service import EmbeddingService
 from app.services.vector_stores.qdrant_service import QdrantService
+from app.core.enums import SearchScope
 
 
 class RetrievalService:
@@ -13,7 +14,9 @@ class RetrievalService:
         self,
         query: str,
         owner_id:str,
-        limit: int = 5
+        department: str,
+        scope: SearchScope,
+        limit: int = 15
     ):
 
         query_embedding = self.embedding_service.embed(
@@ -23,6 +26,8 @@ class RetrievalService:
         results = self.qdrant_service.search(
             query_embedding=query_embedding,
             owner_id=owner_id,
+            department=department,
+            scope=scope,
             limit=limit
         )
 
