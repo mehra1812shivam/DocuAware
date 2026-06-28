@@ -23,6 +23,7 @@ def chat(
     response = chat_service.chat(
         question=request.question,
         owner_id=str(current_user.id),
+        department=current_user.department,
         scope=request.scope
     )
 

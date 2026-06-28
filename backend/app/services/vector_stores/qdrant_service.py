@@ -9,7 +9,8 @@ from app.core.enums import SearchScope
 from qdrant_client.models import (
     Distance,
     VectorParams,
-    PointStruct
+    PointStruct,
+    MatchAny
 )
 
 from uuid import uuid4
@@ -58,6 +59,16 @@ class QdrantService:
             field_name="owner_id",
             field_schema="keyword"
         )
+        self.client.create_payload_index(
+            collection_name=settings.qdrant_collection,
+            field_name="department",
+            field_schema="keyword"
+        )
+        self.client.create_payload_index(
+            collection_name=settings.qdrant_collection,
+            field_name="confidentiality",
+            field_schema="keyword"
+        )
 
     def upsert_documents(
             self,
@@ -87,7 +98,7 @@ class QdrantService:
             collection_name=settings.qdrant_collection,
             points=points
         )
-    def search(self,query_embedding: list[float],owner_id: str,scope: SearchScope,limit: int = 5):
+    def search(self,query_embedding: list[float],owner_id: str,department:str,scope: SearchScope,limit: int = 5):
         if scope == SearchScope.MY_DOCUMENTS:
             query_filter = Filter(
                 must=[
@@ -101,19 +112,35 @@ class QdrantService:
             )
 
         else:
-
-            # TODO:
-            # Implement ALL_ACCESSIBLE filter
             query_filter = Filter(
-                must=[
-                    FieldCondition(
-                        key="owner_id",
-                        match=MatchValue(
-                            value=owner_id
+            should=[
+                Filter(
+                    must=[
+                        FieldCondition(
+                            key="owner_id",
+                            match=MatchValue(value=owner_id)
+                        )
+                    ]
+                ),
+                Filter(
+                    must=[
+                        FieldCondition(
+                            key="department",
+                            match=MatchValue(value=department)
+                        ),
+                        FieldCondition(
+                        key="confidentiality",
+                        match=MatchAny(
+                            any=[
+                                "PUBLIC",
+                                "INTERNAL"
+                            ]
                         )
                     )
-                ]
-            )
+                    ]
+                )
+            ]
+        )
 
 
         return self.client.query_points(

@@ -18,12 +18,14 @@ class ChatService:
         self,
         question: str,
         owner_id: str,
+        department: str,
         scope: SearchScope
     ) -> str:
         start = time.perf_counter()
         chunks = self.retrieval_service.retrieve(
             query=question,
             owner_id=owner_id,
+            department=department,
             scope=scope,
             limit=10
         )
