@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 from app.schemas.chat import ChatRequest, ChatResponse
 from app.services.chat.chat_service import ChatService
-from app.api.dependencies import get_current_user
+from app.api.dependencies import get_current_user,get_chat_service
 from app.models import User
 
 router = APIRouter(
@@ -16,10 +16,9 @@ router = APIRouter(
 )
 def chat(
     request: ChatRequest,
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
+    chat_service: ChatService = Depends(get_chat_service)
 ):
-    chat_service = ChatService()
-
     response = chat_service.chat(
         question=request.question,
         owner_id=str(current_user.id),

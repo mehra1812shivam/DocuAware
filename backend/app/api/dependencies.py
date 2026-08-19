@@ -7,6 +7,8 @@ from fastapi import Depends, HTTPException, status
 from app.core.security import decode_access_token, oauth2_scheme
 from fastapi.security import HTTPAuthorizationCredentials
 from app.models import User
+from functools import lru_cache
+from app.services.chat.chat_service import ChatService
 
 def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
@@ -49,3 +51,7 @@ def get_current_admin_user(
             detail="Admin access required"
         )
     return user
+
+@lru_cache
+def get_chat_service() -> ChatService:
+    return ChatService()
