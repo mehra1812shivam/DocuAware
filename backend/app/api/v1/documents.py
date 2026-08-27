@@ -80,12 +80,13 @@ def upload_document(
             detail=str(e)
         )
 
-@router.get("",response_model=list[DocumentResponse])
-def get_documents(current_user: User = Depends(get_current_user),db: Session = Depends(get_db)):
-
+@router.get("", response_model=list[DocumentResponse])
+def get_documents(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     document_service = DocumentService(db)
 
-    return document_service.get_documents_by_owner(
-        current_user.id
+    return document_service.get_accessible_documents(
+        current_user
     )
-    
