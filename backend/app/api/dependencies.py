@@ -9,6 +9,7 @@ from fastapi.security import HTTPAuthorizationCredentials
 from app.models import User
 from functools import lru_cache
 from app.services.chat.chat_service import ChatService
+from app.services.summary.summary_service import SummaryService
 
 def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
@@ -55,3 +56,7 @@ def get_current_admin_user(
 @lru_cache
 def get_chat_service() -> ChatService:
     return ChatService()
+
+@lru_cache
+def get_summary_service() -> SummaryService:
+    return SummaryService()
