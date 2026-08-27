@@ -7,6 +7,8 @@ from app.core.enums import  (
 )
 from uuid import UUID
 from app.utils.file_utils import get_file_type
+from sqlalchemy import or_, and_
+from app.models import User
 
 class DocumentService:
 
@@ -51,3 +53,25 @@ class DocumentService:
             .order_by(Document.created_at.desc())
             .all()
         )
+
+    def get_accessible_documents(self, current_user: User) -> list[Document]:
+
+        return (
+            self.db.query(Document)
+            .filter(
+                or_(
+                    Document.owner_id == current_user.id,
+
+                    Document.confidentiality == ConfidentialityLevel.PUBLIC,
+
+                    and_(
+                        Document.confidentiality == ConfidentialityLevel.INTERNAL,
+                        Document.department == current_user.department
+                    )
+                )
+            )
+            .order_by(Document.created_at.desc())
+            .all()
+        )
+
+    
