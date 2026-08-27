@@ -69,6 +69,11 @@ class QdrantService:
             field_name="confidentiality",
             field_schema="keyword"
         )
+        self.client.create_payload_index(
+            collection_name=settings.qdrant_collection,
+            field_name="document_id",
+            field_schema="keyword"
+        )
 
     def upsert_documents(
             self,
@@ -149,3 +154,28 @@ class QdrantService:
             query_filter=query_filter,
             limit=limit
         ).points
+
+    def get_document_chunks(self,document_id: str):
+        query_filter = Filter(
+            must=[
+                FieldCondition(
+                    key="document_id",
+                    match=MatchValue(
+                        value=document_id
+                    )
+                )
+            ]
+        )
+
+        results = self.client.scroll(
+            collection_name=settings.qdrant_collection,
+            scroll_filter=query_filter,
+            limit=1000,
+            with_payload=True,
+            with_vectors=False
+        )[0]
+
+        return sorted(
+            results,
+            key=lambda point: point.payload["chunk_index"]
+        )
