@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from uuid import UUID
+
 from app.models.document import Document
 from app.core.enums import ConfidentialityLevel
 from app.services.vector_stores.qdrant_service import QdrantService
@@ -28,8 +29,9 @@ class SummaryService:
         if not document:
             raise ValueError("Document not found")
 
-        # Access check
-        if str(document.owner_id) != owner_id:
+        # Owner always has access to their own document.
+        # For other users, apply confidentiality rules.
+        if document.owner_id != owner_id:
 
             if document.confidentiality == ConfidentialityLevel.CONFIDENTIAL:
                 raise PermissionError("Access denied")
@@ -83,3 +85,4 @@ Summary:
             "filename": document.filename,
             "summary": summary
         }
+

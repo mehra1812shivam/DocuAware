@@ -3,7 +3,12 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from app.core.enums import DocumentStatus, FileType
+from app.core.enums import (
+    ConfidentialityLevel,
+    Department,
+    DocumentStatus,
+    FileType,
+)
 
 
 class DocumentResponse(BaseModel):
@@ -11,4 +16,6 @@ class DocumentResponse(BaseModel):
     filename: str
     file_type: FileType
     status: DocumentStatus
+    department: Department
+    confidentiality: ConfidentialityLevel
     created_at: datetime
