@@ -179,3 +179,20 @@ class QdrantService:
             results,
             key=lambda point: point.payload["chunk_index"]
         )
+
+    def delete_document_chunks(self, document_id: str):
+        query_filter = Filter(
+            must=[
+                FieldCondition(
+                    key="document_id",
+                    match=MatchValue(
+                        value=document_id
+                    )
+                )
+            ]
+        )
+
+        self.client.delete(
+            collection_name=settings.qdrant_collection,
+            points_selector=query_filter
+        )

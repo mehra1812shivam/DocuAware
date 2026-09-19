@@ -13,6 +13,10 @@ from app.schemas.document import DocumentResponse
 from app.services.ingestion.document_ingestion_service import (
     DocumentIngestionService
 )
+from uuid import UUID
+from app.models.document import Document
+from app.services.vector_stores.qdrant_service import QdrantService
+from app.core.enums import UserRole
 
 router = APIRouter(
     prefix="/documents",
@@ -90,3 +94,40 @@ def get_documents(
     return document_service.get_accessible_documents(
         current_user
     )
+
+@router.delete("/{document_id}", status_code=204)
+def delete_document(document_id: UUID,current_user: User = Depends(get_current_user),db: Session = Depends(get_db)):
+    document_service = DocumentService(db)
+    qdrant_service = QdrantService()
+
+    document = db.get(Document, document_id)
+
+    if not document:
+        raise HTTPException(
+            status_code=404,
+            detail="Document not found"
+        )
+
+    if (
+        document.owner_id != current_user.id
+        and current_user.role != UserRole.ADMIN
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have permission to delete this document"
+        )
+
+    try:
+        qdrant_service.delete_document_chunks(
+            str(document.id)
+        )
+
+        document_service.delete_document(
+            document.id
+        )
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to delete document"
+        )

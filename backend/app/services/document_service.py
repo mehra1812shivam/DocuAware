@@ -45,6 +45,17 @@ class DocumentService:
 
         return document        
 
+    def delete_document(self, document_id: UUID) -> Document:
+        document = self.db.get(Document, document_id)
+
+        if not document:
+            raise ValueError("Document not found")
+
+        self.db.delete(document)
+        self.db.commit()
+
+        return document
+
     def get_documents_by_owner(self,owner_id: UUID) -> list[Document]:
 
         return (
